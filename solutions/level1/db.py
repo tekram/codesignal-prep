@@ -1,21 +1,22 @@
 class InMemoryDB:
     def __init__(self):
-        self.store = {}
+        # {key: {field: {"value": v, "expires_at": float('inf')}}}
+        self._store = {}
 
-    def set(self, key, value):
-        self.store[key] = value
+    def set(self, key, field, value):
+        if key not in self._store:
+            self._store[key] = {}
+        self._store[key][field] = {"value": value, "expires_at": float('inf')}
 
-    def get(self, key):
-        return self.store.get(key, None)
+    def get(self, key, field):
+        try:
+            return self._store[key][field]["value"]
+        except KeyError:
+            return None
 
-    def delete(self, key):
-        if key in self.store:
-            del self.store[key]
+    def delete(self, key, field):
+        try:
+            del self._store[key][field]
             return True
-        return None
-
-    def keys(self):
-        return list(self.store.keys())
-
-    def scan(self, prefix):
-        return [k for k in self.store if k.startswith(prefix)]
+        except KeyError:
+            return False

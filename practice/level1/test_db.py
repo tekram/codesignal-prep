@@ -2,53 +2,49 @@ import unittest
 from db import InMemoryDB
 
 
-class TestInMemoryDB(unittest.TestCase):
+class TestLevel1(unittest.TestCase):
     def setUp(self):
         self.db = InMemoryDB()
 
     def test_set_and_get(self):
-        self.db.set("a", 1)
-        self.assertEqual(self.db.get("a"), 1)
+        self.db.set("rec1", "name", "Alice")
+        self.assertEqual(self.db.get("rec1", "name"), "Alice")
 
-    def test_get_missing(self):
-        self.assertIsNone(self.db.get("missing"))
+    def test_get_missing_key(self):
+        self.assertIsNone(self.db.get("nope", "name"))
 
-    def test_overwrite(self):
-        self.db.set("a", 1)
-        self.db.set("a", 2)
-        self.assertEqual(self.db.get("a"), 2)
+    def test_get_missing_field(self):
+        self.db.set("rec1", "name", "Alice")
+        self.assertIsNone(self.db.get("rec1", "age"))
+
+    def test_overwrite_field(self):
+        self.db.set("rec1", "name", "Alice")
+        self.db.set("rec1", "name", "Bob")
+        self.assertEqual(self.db.get("rec1", "name"), "Bob")
+
+    def test_multiple_fields(self):
+        self.db.set("rec1", "name", "Alice")
+        self.db.set("rec1", "age", "30")
+        self.assertEqual(self.db.get("rec1", "name"), "Alice")
+        self.assertEqual(self.db.get("rec1", "age"), "30")
 
     def test_delete_existing(self):
-        self.db.set("a", 1)
-        result = self.db.delete("a")
-        self.assertTrue(result)
-        self.assertIsNone(self.db.get("a"))
+        self.db.set("rec1", "name", "Alice")
+        self.assertTrue(self.db.delete("rec1", "name"))
+        self.assertIsNone(self.db.get("rec1", "name"))
 
-    def test_delete_missing(self):
-        self.assertIsNone(self.db.delete("missing"))
+    def test_delete_missing_field(self):
+        self.db.set("rec1", "name", "Alice")
+        self.assertFalse(self.db.delete("rec1", "age"))
 
-    def test_keys(self):
-        self.db.set("a", 1)
-        self.db.set("b", 2)
-        self.assertCountEqual(self.db.keys(), ["a", "b"])
+    def test_delete_missing_key(self):
+        self.assertFalse(self.db.delete("nope", "name"))
 
-    def test_keys_empty(self):
-        self.assertEqual(self.db.keys(), [])
-
-    def test_scan(self):
-        self.db.set("foo1", 1)
-        self.db.set("foo2", 2)
-        self.db.set("bar1", 3)
-        self.assertCountEqual(self.db.scan("foo"), ["foo1", "foo2"])
-
-    def test_scan_no_match(self):
-        self.db.set("abc", 1)
-        self.assertEqual(self.db.scan("xyz"), [])
-
-    def test_scan_empty_prefix(self):
-        self.db.set("a", 1)
-        self.db.set("b", 2)
-        self.assertCountEqual(self.db.scan(""), ["a", "b"])
+    def test_multiple_records_independent(self):
+        self.db.set("rec1", "name", "Alice")
+        self.db.set("rec2", "name", "Bob")
+        self.assertEqual(self.db.get("rec1", "name"), "Alice")
+        self.assertEqual(self.db.get("rec2", "name"), "Bob")
 
 
 if __name__ == "__main__":

@@ -2,17 +2,11 @@ class InMemoryDB:
     def __init__(self):
         pass
 
-    def set(self, key, value):
+    def set(self, key, field, value):
         pass
 
-    def get(self, key):
+    def get(self, key, field):
         pass
 
-    def delete(self, key):
-        pass
-
-    def keys(self):
-        pass
-
-    def scan(self, prefix):
+    def delete(self, key, field):
         pass

@@ -1,30 +1,53 @@
 # codesignal-prep
 
-CodeSignal interview prep — in-memory database implemented progressively across levels.
+Prep for the Anthropic Fellows Program CodeSignal assessment — 90 min, 4 levels, in-memory database in Python.
 
-## Level 1 — Basic In-Memory DB
+## Problem Structure
 
-Concepts: dict operations, key-value storage, prefix scanning.
+Nested record store: `database[key][field] = value`.
 
-- `set(key, value)` — store key/value
-- `get(key)` — retrieve value or None
-- `delete(key)` — remove key
-- `keys()` — all keys
-- `scan(prefix)` — keys matching prefix
+| Level | Concept | Time |
+|-------|---------|------|
+| 1 | Basic CRUD: `set/get/delete(key, field, value)` | ~10 min |
+| 2 | Scans: `scan(key)` → `["field(value)", ...]` sorted | ~10 min |
+| 3 | Timestamps + TTL: `_at` methods, half-open `[t, t+ttl)` | ~25 min |
+| 4 | Backup/Restore with TTL recalculation | ~25 min |
 
-## Level 2 — TTL Support
-
-Concepts: time-based expiry, tuple storage, filtering expired entries.
-
-Extends Level 1 with:
-- `set(key, value, ttl=None)` — optional TTL in seconds
-- `get(key)` — returns None if expired
-- `keys()` — excludes expired keys
-- `scan(prefix)` — excludes expired keys matching prefix
-
-## Usage
+## How to Practice
 
 ```bash
-python -m unittest level1/test_db.py
-python -m unittest level2/test_db.py
+# pick a level, implement in practice/levelN/db.py
+# read the spec first:
+cat level1/prompt.md
+
+# run tests:
+cd practice/level1
+python -m unittest test_db.py -v
 ```
+
+## With Claude Code
+
+```bash
+cd codesignal-prep
+claude
+```
+
+Claude reads `CLAUDE.md` and acts as a coaching tutor — guides without giving away answers.
+
+## Repo Layout
+
+```
+levelN/prompt.md         spec for each level
+levelN/test_db.py        reference tests
+practice/levelN/db.py    blank template — write your code here
+practice/levelN/test_db.py   tests to run
+solutions/levelN/db.py   reference solutions
+```
+
+## Key Gotchas
+
+- TTL half-open: field expires **at** `t + ttl` (not valid at that exact timestamp)
+- Scan output format: exactly `"field(value)"` — no spaces, sorted by field name
+- `delete` returns `False` (not `None`) for missing fields
+- `backup` count = records with ≥1 alive field, not total fields
+- Design Level 1 with Level 3 in mind: store `{"value": v, "expires_at": float('inf')}`

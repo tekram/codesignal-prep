@@ -1,52 +1,48 @@
-# Level 2 — TTL Support
+# Level 2 — Filtered Scans
 
-Extend Level 1's `InMemoryDB` with time-to-live expiry.
+Extends Level 1. Add two scan methods.
 
-## Methods (changes from Level 1)
+## New Methods
 
 ```python
-import time
+def scan(self, key: str) -> list[str]:
+    """
+    Return all fields in record at key as ["field(value)", ...]
+    sorted lexicographically by field name.
+    Return [] if key missing.
+    """
 
-class InMemoryDB:  # extends level1
-    def set(self, key: str, value, ttl: float = None) -> None:
-        # store key/value with optional TTL in seconds
-        # if ttl given, key expires at time.time() + ttl
-
-    def get(self, key: str):
-        # return value, or None if missing OR expired
-
-    def keys(self) -> list:
-        # return only non-expired keys
-
-    def scan(self, prefix: str) -> list:
-        # return non-expired keys matching prefix
+def scan_by_prefix(self, key: str, prefix: str) -> list[str]:
+    """
+    Same as scan(), but only fields whose name starts with prefix.
+    prefix="" matches all fields (same as scan).
+    """
 ```
 
-## Key Details
+## Output Format — CRITICAL
 
-- Expired key behaves like it doesn't exist (get → None, delete → None)
-- `set` without ttl → key never expires
-- Overwriting an expired key with `set` should work normally
-- No need to proactively clean up expired keys (lazy expiry is fine)
+Each item must be exactly `"field(value)"` — no spaces.
+
+```python
+# db has key="user1", field="name", value="Alice"
+db.scan("user1")  # → ["name(Alice)"]
+```
+
+Sort is by **field name**, lexicographically. Not by value, not by insertion order.
+
+## Notes
+
+- `scan` on missing key → `[]` not `None`
+- Helper: `f"{field}({value})"` — memorize this pattern
+- Helper: `sorted(fields.items())` gives `(field, entry)` pairs sorted by field
+
+## Time Target
+
+< 10 minutes on top of Level 1
 
 ## Run Tests
 
 ```bash
-python -m unittest practice/level2/test_db.py -v
-```
-
-## Time Target
-
-< 15 minutes (including level 1 re-implementation or inheritance)
-
-## Pattern to Remember
-
-```python
-# Store as tuple
-self.store[key] = (value, time.time() + ttl if ttl else None)
-
-# Check expiry
-value, expires_at = self.store[key]
-if expires_at is not None and time.time() > expires_at:
-    return None  # expired
+cd practice/level2
+python -m unittest test_db.py -v
 ```

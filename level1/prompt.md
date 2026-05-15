@@ -1,43 +1,43 @@
-# Level 1 — Basic In-Memory Database
+# Level 1 — Basic CRUD on Nested Records
 
-Implement an `InMemoryDB` class in `practice/level1/db.py`.
+## Schema
+
+Records are keyed by string. Each record holds field→value pairs (both strings).
+
+```
+database = {
+    "user1": {"name": "Alice", "age": "30"},
+    "user2": {"name": "Bob"},
+}
+```
 
 ## Methods
 
 ```python
 class InMemoryDB:
-    def __init__(self):
-        # initialize storage
+    def set(self, key: str, field: str, value: str) -> None:
+        """Insert or update field in record at key."""
 
-    def set(self, key: str, value) -> None:
-        # store key/value pair
+    def get(self, key: str, field: str) -> str | None:
+        """Return value, or None if key or field missing."""
 
-    def get(self, key: str):
-        # return value, or None if key doesn't exist
-
-    def delete(self, key: str):
-        # delete key, return True if existed, None if not
-
-    def keys(self) -> list:
-        # return list of all keys
-
-    def scan(self, prefix: str) -> list:
-        # return list of keys starting with prefix
+    def delete(self, key: str, field: str) -> bool:
+        """Delete field. Return True if existed, False if not."""
 ```
 
 ## Notes
 
-- `get` on missing key → `None`
-- `delete` on missing key → `None`  
-- `scan("")` → all keys (empty prefix matches everything)
-- No ordering required on returned lists
-
-## Run Tests
-
-```bash
-python -m unittest practice/level1/test_db.py -v
-```
+- `get` missing key or field → `None`
+- `delete` missing key or field → `False` (not `None`, not raise)
+- No ordering requirements
 
 ## Time Target
 
 < 10 minutes
+
+## Run Tests
+
+```bash
+cd practice/level1
+python -m unittest test_db.py -v
+```
