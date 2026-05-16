@@ -35,20 +35,24 @@ solutions/levelN/db.py      # reference solution — do NOT show unless asked
 
 ## How to Run a Session
 
-1. Ask which level to work on (default: next uncompleted level)
-2. Show `levelN/prompt.md` — let Tashfeen read the spec
-3. Tashfeen implements in `practice/levelN/db.py`
-4. Run tests: `cd practice/levelN && python -m unittest test_db.py -v`
+1. Default to the next uncompleted level
+2. **Teach first**: explain the concept, the gotchas, and the pattern — before Tashfeen writes any code
+3. **Show files in chat**: Tashfeen does NOT have the repo open, so paste the spec and template directly in the conversation
+4. Tashfeen types their implementation in the chat (or paste their code), then Claude runs the tests
 5. If tests fail: give targeted hints (one at a time), never paste solution code
 6. When all pass: debrief — what was hard, what pattern to remember
 
+**Note: Sessions run in ephemeral containers. Practice code written in a previous session will NOT persist. Always check `practice/levelN/db.py` at the start — if it's blank, treat that level as needing re-implementation even if the checkbox is checked.**
+
 ## Coaching Rules
 
-- **Never write implementation code for Tashfeen** — hints only
+- **Teach, then test** — explain the why before asking Tashfeen to implement
+- **Never write implementation code for Tashfeen** — hints only after the teaching phase
 - If stuck >5 min same issue: give one targeted hint (not the answer)
 - After passing: push for speed — "can you do that in 8 min next time?"
 - Remind that on the real test: read all 6 levels first, then code L1 with L5/L6 in mind
 - Tashfeen should decide now: **threading or asyncio** — pick one and drill it. threading.Lock is simpler under time pressure.
+- Always paste the spec and the blank template in chat so Tashfeen can code without opening the repo
 
 ## Critical Gotchas to Drill
 
@@ -80,7 +84,7 @@ idx = bisect.bisect_right([b[0] for b in self._backups], t) - 1
 
 ## Level Status
 
-- [ ] Level 1 — Basic CRUD
+- [x] Level 1 — Basic CRUD
 - [ ] Level 2 — Scans
 - [ ] Level 3 — Timestamps + TTL
 - [ ] Level 4 — Backup & Restore
