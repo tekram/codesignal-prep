@@ -95,6 +95,43 @@ d.get("key", {}).get("field")
 {k: v for k, v in d.items() if v > 0}
 ```
 
+### Storing a Dict with Multiple Fields as a Value (DB pattern)
+
+```python
+# SET — store a dict as the value (use this over tuples for 3+ fields)
+store = {}
+store["task1"] = {"payload": "do work", "priority": 1, "expires_at": time.time() + ttl}
+
+# GET — access individual fields by name (clearer than index)
+entry = store.get("task1")
+if entry is not None:
+    print(entry["payload"])       # "do work"
+    print(entry["expires_at"])    # timestamp
+
+# CHECK expiry
+entry = store.get("task1")
+if entry is not None and entry["expires_at"] > time.time():
+    return entry["payload"]
+
+# SEPARATE independent checks — don't combine unrelated conditions
+# WRONG — mixes two different concerns in one if:
+if task_id not in store and ttl is not None:
+    store[task_id] = {...}
+
+# RIGHT — handle each concern separately:
+if task_id in store:              # check 1: does it already exist?
+    return None
+
+if ttl is None:                   # check 2: handle ttl independently
+    expires_at = None
+else:
+    expires_at = time.time() + ttl
+
+store[task_id] = {"payload": payload, "expires_at": expires_at}
+```
+
+---
+
 ### Storing Tuples as Values (DB pattern)
 
 ```python
