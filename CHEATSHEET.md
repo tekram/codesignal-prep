@@ -48,6 +48,13 @@ def delete_at(self, key, field, timestamp):
         del self._store[key][field]
         return True
     return False          # ← False, not None
+
+def get_all_keys(self, timestamp):
+    # only keys that have at least one alive field
+    return [
+        key for key, fields in self._store.items()
+        if any(self._is_alive(e, timestamp) for e in fields.values())
+    ]
 ```
 
 ---
