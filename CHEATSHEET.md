@@ -194,6 +194,95 @@ class RWLock:
 
 ---
 
+## Dictionaries
+
+```python
+# Create
+d = {}
+d = {"key": "value"}
+from collections import defaultdict
+d = defaultdict(dict)   # d[missing_key] auto-creates {}
+
+# Add / update
+d["key"] = "value"
+
+# Read
+d["key"]               # KeyError if missing
+d.get("key")           # None if missing
+d.get("key", "default")
+
+# Delete
+del d["key"]           # KeyError if missing
+d.pop("key", None)     # safe delete, returns value or None
+
+# Check membership
+"key" in d
+"key" not in d
+
+# Iterate
+for k in d:                      # keys
+for k, v in d.items():           # key-value pairs
+for v in d.values()              # values
+
+# Length
+len(d)
+
+# Nested dict access (safe)
+d.get("key", {}).get("field")    # None if either missing
+
+# Dict comprehension
+{k: v for k, v in d.items() if v > 0}
+```
+
+---
+
+## Lists
+
+```python
+# Create
+lst = []
+lst = [1, 2, 3]
+
+# Add
+lst.append(x)           # add to end
+lst.insert(0, x)        # insert at index
+
+# Remove
+lst.pop()               # remove + return last
+lst.pop(0)              # remove + return at index
+lst.remove(x)           # remove first occurrence (ValueError if missing)
+del lst[0]              # remove at index
+
+# Access
+lst[0]                  # first
+lst[-1]                 # last
+lst[1:3]                # slice (index 1 and 2)
+
+# Check membership
+x in lst
+x not in lst
+
+# Iterate
+for item in lst:
+for i, item in enumerate(lst):
+
+# Sort
+lst.sort()              # in-place, ascending
+lst.sort(reverse=True)
+sorted(lst)             # returns new list, original unchanged
+sorted(lst, key=lambda x: x[0])  # sort by first element of tuple
+
+# Length
+len(lst)
+
+# List comprehension
+[x * 2 for x in lst]
+[x for x in lst if x > 0]
+[(f, e) for f, e in d.items() if e["val"] > 0]  # filter dict into list of tuples
+```
+
+---
+
 ## Gotchas
 
 1. `delete` returns **`False`** for missing/expired — never `None`
