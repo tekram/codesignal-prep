@@ -343,3 +343,4 @@ class TestDB(unittest.TestCase):
 8. Dict uses `:` not `=` → `{"key": value}` not `{"key" = value}`
 9. `del d[key]` actually deletes — `d[key] = None` does NOT delete, it sets to None
 10. Always check `key not in d` before `del d[key]` — or it crashes with KeyError
+11. `expires_at = None` means no expiry in simple stores — but `float('inf')` is better: lets you always compare without None checks
