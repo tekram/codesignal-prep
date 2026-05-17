@@ -1,0 +1,211 @@
+# Python Syntax Quick Reference
+
+## Variables & Types
+
+```python
+x = 5
+name = "Alice"
+flag = True
+nothing = None
+big = float('inf')
+```
+
+---
+
+## If / Else
+
+```python
+if x > 0:
+    print("positive")
+elif x == 0:
+    print("zero")
+else:
+    print("negative")
+
+# one-liner
+result = "yes" if x > 0 else "no"
+```
+
+---
+
+## Functions
+
+```python
+def greet(name):
+    return "Hello " + name
+
+def greet(name: str) -> str:       # with type hints
+    return "Hello " + name
+
+def connect(host, port=8080):      # default argument
+    pass
+
+def set_at(key, ttl=None):         # optional argument
+    if ttl is None:
+        expires = float('inf')
+    else:
+        expires = ttl + 10
+```
+
+---
+
+## Classes
+
+```python
+class Dog:
+    def __init__(self, name):      # constructor
+        self.name = name           # instance variable
+
+    def bark(self):
+        return self.name + " says woof"
+
+d = Dog("Rex")
+print(d.bark())
+```
+
+---
+
+## Dictionaries
+
+```python
+d = {}
+d = {"key": "value"}              # colon, not equals
+
+d["key"] = "value"                # set
+d["key"]                          # get — KeyError if missing
+d.get("key")                      # get — None if missing
+d.get("key", "default")           # get with fallback
+
+del d["key"]                      # delete — KeyError if missing
+d.pop("key", None)                # safe delete
+
+"key" in d                        # membership check
+"key" not in d
+
+for k in d:                       # iterate keys
+for k, v in d.items():            # iterate key-value pairs
+for v in d.values():              # iterate values
+
+len(d)
+
+# nested safe access
+d.get("key", {}).get("field")
+
+# dict comprehension
+{k: v for k, v in d.items() if v > 0}
+```
+
+---
+
+## Lists
+
+```python
+lst = []
+lst = [1, 2, 3]
+
+lst.append(x)                     # add to end — NOT .add()
+lst.insert(0, x)                  # insert at index
+
+lst.pop()                         # remove + return last
+lst.pop(0)                        # remove + return at index
+del lst[0]                        # remove at index
+
+lst[0]                            # first item
+lst[-1]                           # last item
+lst[1:3]                          # slice: index 1 and 2
+
+x in lst
+len(lst)
+
+lst.sort()                        # in-place
+sorted(lst)                       # new list, original unchanged
+sorted(lst, key=lambda x: x[0])  # sort by first element of tuple
+
+# list comprehension
+[x * 2 for x in lst]
+[x for x in lst if x > 0]
+```
+
+---
+
+## For Loops
+
+```python
+for i in range(5):                # 0, 1, 2, 3, 4
+for i in range(1, 6):             # 1, 2, 3, 4, 5
+for item in lst:
+for i, item in enumerate(lst):    # index + value
+for k, v in d.items():
+```
+
+---
+
+## String Methods
+
+```python
+s = "Hello World"
+s.lower()                         # "hello world"
+s.upper()                         # "HELLO WORLD"
+s.startswith("He")                # True  — NOT startsWith
+s.endswith("ld")                  # True
+s.split(" ")                      # ["Hello", "World"]
+" ".join(["Hello", "World"])      # "Hello World"
+s.strip()                         # remove whitespace from both ends
+len(s)
+
+# f-string formatting
+f"{field}({value})"               # "name(Alice)"
+f"x is {x}"
+```
+
+---
+
+## Tuples
+
+```python
+t = (1, 2)
+a, b = t                          # unpack
+a, b = b, a                       # swap
+
+# common: store pairs
+entry = ("value", float('inf'))
+value, expires_at = entry         # unpack
+```
+
+---
+
+## None Checks
+
+```python
+if x is None:
+if x is not None:
+if x:                             # falsy: None, 0, "", [], {}
+if not x:
+```
+
+---
+
+## Import
+
+```python
+import threading
+import copy
+import bisect
+from collections import defaultdict
+import time
+import asyncio
+```
+
+---
+
+## Common Gotchas
+
+| Wrong | Right |
+|-------|-------|
+| `startsWith` | `startswith` |
+| `lst.add(x)` | `lst.append(x)` |
+| `self.store(key)` | `self.store[key]` |
+| `{"key" = value}` | `{"key": value}` |
+| `ttl:None` | `ttl=None` |
+| `async` | `async def` |
+| `for k in self` | `for k in d` |
