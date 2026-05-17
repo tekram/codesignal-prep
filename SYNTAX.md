@@ -95,6 +95,50 @@ d.get("key", {}).get("field")
 {k: v for k, v in d.items() if v > 0}
 ```
 
+### Storing Tuples as Values (DB pattern)
+
+```python
+# SET — store a tuple as the value
+store = {}
+store["user1"] = ("Alice", float('inf'))    # (value, expires_at)
+store["user2"] = ("Bob", 100)               # expires at t=100
+
+# GET — unpack the tuple
+entry = store.get("user1")
+if entry is not None:
+    value, expires_at = entry               # unpack both at once
+    print(value)                            # "Alice"
+    print(expires_at)                       # inf
+
+# CHECK expiry then get value
+entry = store.get("user1")
+if entry is not None and entry[1] > timestamp:   # entry[1] is expires_at
+    value = entry[0]                             # entry[0] is value
+
+# CLEANER — unpack first, then check
+entry = store.get("user1")
+if entry is not None:
+    value, expires_at = entry
+    if expires_at > timestamp:
+        return value
+
+# DELETE
+if "user1" in store:
+    del store["user1"]
+
+# NESTED dict with tuple values (the real DB structure)
+store = {}                                       # store[key][field] = (value, expires_at)
+store["user1"] = {}
+store["user1"]["name"] = ("Alice", float('inf'))
+store["user1"]["age"] = ("30", 100)
+
+# get a nested field safely
+fields = store.get("user1", {})
+entry = fields.get("name")
+if entry is not None:
+    value, expires_at = entry
+```
+
 ---
 
 ## Lists
