@@ -290,6 +290,47 @@ len(lst)
 
 ---
 
+## Common Typos to Avoid
+
+| Wrong | Right |
+|-------|-------|
+| `startsWith` | `startswith` |
+| `lst.add(x)` | `lst.append(x)` |
+| `self.store(key)` | `self.store[key]` |
+| `for key in self` | `for key in d` |
+| `async` (alone) | `async def` |
+| `ttl:None` | `ttl=None` |
+
+---
+
+## Reading a Unittest in 5 Seconds
+
+```python
+class TestDB(unittest.TestCase):
+
+    def setUp(self):              # 1. ignore this — just creates the object
+        self.db = InMemoryDB()
+
+    def test_get_missing_key(self):   # 2. read the test name first — tells you what's being tested
+        result = self.db.get("k", "f")
+        self.assertIsNone(result)     # 3. last line = the requirement (None if missing)
+```
+
+- Test name → what feature is being tested
+- Last `assert` line → what your code must return/do
+- `setUp` → just boilerplate, skip it
+
+---
+
+## Time Management
+
+- **Read all 6 levels before writing a single line** (2 min) — design Level 1 to handle Level 5/6
+- **Run tests after every method**, not after every level
+- **Stuck > 10 min?** Move to next level and come back — partial credit is real
+- **4 levels beats 3 perfect levels** — done is better than perfect
+
+---
+
 ## Gotchas
 
 1. `delete` returns **`False`** for missing/expired — never `None`
@@ -299,3 +340,6 @@ len(lst)
 5. `float('inf') - anything` is still `float('inf')` — no special case needed... but check the prompt
 6. Use `RLock` not `Lock` if methods call other methods
 7. `defaultdict(dict)` means `self._store[new_key]` auto-creates `{}` — fine for set, but `get` should use `.get(key, {})` to avoid creating empty entries
+8. Dict uses `:` not `=` → `{"key": value}` not `{"key" = value}`
+9. `del d[key]` actually deletes — `d[key] = None` does NOT delete, it sets to None
+10. Always check `key not in d` before `del d[key]` — or it crashes with KeyError
